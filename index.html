@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Status Tracker</title>
+  <style>
+    body { font-family: sans-serif; background: #222; color: #fff; text-align: center; padding: 20px; }
+    .stat-card { background: #333; padding: 20px; border-radius: 10px; max-width: 300px; margin: 0 auto; }
+    button { background: #4CAF50; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; margin: 5px; font-size: 16px;}
+    button:active { background: #45a049; }
+  </style>
+</head>
+<body>
+
+  <div class="stat-card">
+    <h2>Character Status</h2>
+    <p>Level: <span id="level-display">...</span></p>
+    <p>EXP: <span id="exp-display">...</span></p>
+    
+    <button onclick="addExp(50)">+50 EXP</button>
+    <button onclick="levelUp()">Level Up</button>
+  </div>
+
+  <!-- Load Firebase safely via CDN -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
+    import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-database.js";
+
+    // REPLACE THIS BLOCK WITH YOUR FIREBASE CONFIG
+    const firebaseConfig = {
+    apiKey: "AIzaSyB_UlOlU8qig5bexXRyVkSQKJVlrxy9ATY",
+    authDomain: "status-tracker-e863c.firebaseapp.com",
+    databaseURL: "https://status-tracker-e863c-default-rtdb.firebaseio.com",
+    projectId: "status-tracker-e863c",
+    storageBucket: "status-tracker-e863c.firebasestorage.app",
+    messagingSenderId: "156914745819",
+    appId: "1:156914745819:web:254bb56d97d0d967f067fe",
+    measurementId: "G-BB5H5ZPC01"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const playerRef = ref(db, 'player1');
+
+    // Global variables to hold current stats
+    let currentExp = 0;
+    let currentLevel = 1;
+
+    // Listen for changes from ANY device
+    onValue(playerRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        currentExp = data.exp || 0;
+        currentLevel = data.level || 1;
+        document.getElementById('exp-display').innerText = currentExp;
+        document.getElementById('level-display').innerText = currentLevel;
+      } else {
+        // If database is empty, set default stats
+        set(playerRef, { exp: 0, level: 1 });
+      }
+    });
+
+    // Make functions available to HTML buttons
+    window.addExp = function(amount) {
+      set(playerRef, {
+        exp: currentExp + amount,
+        level: currentLevel
+      });
+    };
+
+    window.levelUp = function() {
+      set(playerRef, {
+        exp: currentExp,
+        level: currentLevel + 1
+      });
+    };
+  </script>
+</body>
+</html>
