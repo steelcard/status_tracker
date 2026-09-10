@@ -15,9 +15,9 @@
   <div class="stat-card">
     <h2>Character Status</h2>
     <p>Level: <span id="level-display">...</span></p>
-    <p>EXP: <span id="exp-display">...</span></p>
+    <p>EXP: <span id="exp-display">...</span> / 1000</p>
     
-    <button onclick="addExp(50)">+50 EXP</button>
+    <button onclick="addExp(150)">+150 EXP</button>
     <button onclick="levelUp()">Level Up</button>
   </div>
 
@@ -67,6 +67,13 @@
         exp: currentExp + amount,
         level: currentLevel
       });
+      if (playerRef.exp > 1000) {
+          levelUp();
+          set(playerRef, {
+            exp: currentExp - 1000,
+            level: currentLevel
+          })
+      }
     };
 
     window.levelUp = function() {
