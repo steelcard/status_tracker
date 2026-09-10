@@ -19,6 +19,7 @@
     
     <button onclick="addExp(150)">+150 EXP</button>
     <button onclick="levelUp()">Level Up</button>
+    <button onclick="reset()">reset</button>
   </div>
 
   <!-- Load Firebase safely via CDN -->
@@ -86,6 +87,13 @@
         level: currentLevel + 1
       });
     };
+
+    window.reset = function() {
+      set(playerRef, {
+        exp: 0,
+        level: 0
+      })
+    }
   </script>
 </body>
 </html>
