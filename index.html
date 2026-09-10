@@ -61,19 +61,23 @@
       }
     });
 
-    // Make functions available to HTML buttons
+
+// Make functions available to HTML buttons
     window.addExp = function(amount) {
-      set(playerRef, {
-        exp: currentExp + amount,
-        level: currentLevel
-      });
-      if (playerRef.exp > 1000) {
-          levelUp();
-          set(playerRef, {
-            exp: currentExp - 1000,
-            level: currentLevel
-          })
+      let newExp = currentExp + amount;
+      let newLevel = currentLevel;
+
+      // Check if we hit the 1000 EXP threshold
+      if (newExp >= 1000) {
+        newLevel = currentLevel + 1; // Increase level
+        newExp = newExp - 1000;      // Keep the leftover EXP
       }
+
+      // Send the final calculated values to Firebase in ONE update
+      set(playerRef, {
+        exp: newExp,
+        level: newLevel
+      });
     };
 
     window.levelUp = function() {
